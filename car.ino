@@ -16,6 +16,10 @@ L298NX2 motors(left_motor_en_pin, left_motor_in1_pin, left_motor_in2_pin, right_
 Servo myservo;
 
 void setup() {
+    // Set motor speeds
+    motors.setSpeedA(150);  // Left Motor
+    motors.setSpeedB(130);  // Right Motor
+
     // Initiate pin of IrReceiver object
     /* IrReceiver.setReceivePin(ir_receiver_pin); */
     /* IrReceiver.enableIRIn(); */
@@ -23,10 +27,6 @@ void setup() {
 
     // Declare pin of myservo object
     /* myservo.attach(servo_pin); */
-
-    // Set motor values
-    motors.setSpeedA(150);  // Left Motor
-    motors.setSpeedB(130);  // Right Motor
 
     // Start serial communication
     Serial.begin(9600);
@@ -38,7 +38,7 @@ unsigned long last_millis = 0;
 int continued_signal_wait_time = 150;    // Number of milliseconds to wait for a repeated signal (ideally would be controller emitting delay)
 
 // BT Specific Variables
-String bt_input;
+String bt_input = "";
 
 // Other Variables
 String mode;
@@ -119,55 +119,66 @@ void loop() {
 
         bt_input = Serial.readStringUntil('\n');
         Serial.println(bt_input);
-
-        switch (bt_input[0])
-        {
-            // Freeze(Stop)
-            case 'f':
-                motors.stop();
-                break;
-            // Forward
-            case 'w':
-                motors.forward();
-                break;
-            // Left
-            case 'a':
-                motors.backwardA();
-                motors.forwardB();
-                break;
-            // Backward
-            case 's':
-                motors.backward();
-                break;
-            // Right
-            case 'd':
-                motors.forwardA();
-                motors.backwardB();
-                break;
-        }
-
-        /* if (bt_input == "f") */
-        /* { */
-        /*     motors.stop(); */
-        /* } */
-        /* else if (bt_input == "w") */
-        /* { */
-        /*     motors.forward(); */
-        /* } */
-        /* else if (bt_input == "a") */
-        /* { */
-        /*     motors.backwardA(); */
-        /*     motors.forwardB(); */
-        /* } */
-        /* else if (bt_input == "s") */
-        /* { */
-        /*     motors.backward(); */
-        /* } */
-        /* else if (bt_input == "d") */
-        /* { */
-        /*     motors.forwardA(); */
-        /*     motors.backwardB(); */
-        /* } */
-
+        Serial.println(bt_input.toInt());
     }
+
+    // Handle valid inputs
+    if (bt_input.endsWith("f"))
+    {
+        motors.stop();
+    }
+    else if (bt_input.endsWith("w"))
+    {
+        if (bt_input.toInt())
+        {
+            motors.forwardFor(bt_input.toInt(), resetMotors);
+        }
+        else
+        {
+            motors.forward();
+        }
+    }
+    else if (bt_input.endsWith("a"))
+    {
+        if (bt_input.toInt())
+        {
+            motors.backwardForA(bt_input.toInt(), resetMotors);
+            motors.forwardForB(bt_input.toInt(), resetMotors);
+        }
+        else
+        {
+            motors.backwardA();
+            motors.forwardB();
+        }
+    }
+    else if (bt_input.endsWith("s"))
+    {
+        if (bt_input.toInt())
+        {
+            motors.backwardFor(bt_input.toInt(), resetMotors);
+        }
+        else
+        {
+            motors.backward();
+        }
+    }
+    else if (bt_input.endsWith("d"))
+    {
+        if (bt_input.toInt())
+        {
+            motors.forwardForA(bt_input.toInt(), resetMotors);
+            motors.backwardForB(bt_input.toInt(), resetMotors);
+        }
+        else
+        {
+            motors.forwardA();
+            motors.backwardB();
+        }
+    }
+}
+
+void resetMotors()
+{
+    motors.reset();
+    bt_input = "";
 }
