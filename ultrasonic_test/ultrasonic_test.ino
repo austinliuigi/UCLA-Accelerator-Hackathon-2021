@@ -10,7 +10,7 @@
 #define right_motor_enable_pin 10
 
 
-// Initialize sensor that uses digital pins 13 and 12.
+// Initialize sensor 
 int triggerPin = 11;
 int echoPin = 12;
 const int led = 7; // for troubleshooting
@@ -48,7 +48,9 @@ void loop () {
        
        //We need to experiment with this, so it can actually turn 90
        delay(1000);     
-       distance = distanceSensor.measureDistanceCm();
+       //Measure dist again for the right wall
+       distance = distanceSensor.measureDistanceCm(); 
+       
         if (distance < 4.5){ //turn left 180 degrees
           Serial.println("Right wall detected -> turning left");
           turnLeft();
@@ -57,9 +59,7 @@ void loop () {
           delay(1600);  
         }
     }
-
-    troubleshoot();
- 
+  //  troubleshoot();
 }
 
 void troubleshoot()
