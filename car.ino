@@ -32,16 +32,27 @@ void setup() {
     Serial.begin(9600);
 }
 
+// IR Specific Variables
 long time_since_last_signal = 0;        // Tracks the time between *received* signals
 unsigned long last_millis = 0;
 int continued_signal_wait_time = 150;    // Number of milliseconds to wait for a repeated signal (ideally would be controller emitting delay)
 
+// BT Specific Variables
+String bt_input;
+
+// Other Variables
+String mode;
+
 void loop() {
+    /*** Infrared Signal Handling ***/
     // If data is available
     if (IrReceiver.decode())
     {
         if (IrReceiver.decodedIRData.protocol != 0)
         {
+            // Set mode
+            mode = "ir";
+
             // Reset timer
             time_since_last_signal = 0;
             
@@ -87,7 +98,7 @@ void loop() {
         IrReceiver.resume();
     }
     // If {continued_signal_wait_time}ms passes without a signal
-    else if (time_since_last_signal > continued_signal_wait_time)
+    else if ((time_since_last_signal > continued_signal_wait_time) && (mode == "ir"))
     {
         motors.stop();
     }
@@ -97,5 +108,66 @@ void loop() {
     {
         time_since_last_signal += (millis() - last_millis);
         last_millis = millis();
+    }
+
+    /*** Bluetooth Signal Handling ***/
+    // If data is available
+    if (Serial.available() > 0)
+    {
+        // Set mode
+        mode = "bt";
+
+        bt_input = Serial.readStringUntil('\n');
+        Serial.println(bt_input);
+
+        switch (bt_input[0])
+        {
+            // Freeze(Stop)
+            case 'f':
+                motors.stop();
+                break;
+            // Forward
+            case 'w':
+                motors.forward();
+                break;
+            // Left
+            case 'a':
+                motors.backwardA();
+                motors.forwardB();
+                break;
+            // Backward
+            case 's':
+                motors.backward();
+                break;
+            // Right
+            case 'd':
+                motors.forwardA();
+                motors.backwardB();
+                break;
+        }
+
+        /* if (bt_input == "f") */
+        /* { */
+        /*     motors.stop(); */
+        /* } */
+        /* else if (bt_input == "w") */
+        /* { */
+        /*     motors.forward(); */
+        /* } */
+        /* else if (bt_input == "a") */
+        /* { */
+        /*     motors.backwardA(); */
+        /*     motors.forwardB(); */
+        /* } */
+        /* else if (bt_input == "s") */
+        /* { */
+        /*     motors.backward(); */
+        /* } */
+        /* else if (bt_input == "d") */
+        /* { */
+        /*     motors.forwardA(); */
+        /*     motors.backwardB(); */
+        /* } */
+
     }
 }
