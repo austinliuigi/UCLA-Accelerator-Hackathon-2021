@@ -3,12 +3,16 @@
 #include <HCSR04.h>
 
 // Initialize sensor that uses digital pins 13 and 12.
-int triggerPin = 6;
-int echoPin = 7;
+int triggerPin = 11;
+int echoPin = 12;
+const int led = 7;
+
 UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
 
 void setup () {
     Serial.begin(9600);  // We initialize serial connection so that we could print values from sensor.
+    pinMode(led, OUTPUT);
+    
 }
 
 void loop () {
@@ -16,6 +20,12 @@ void loop () {
     double distance = distanceSensor.measureDistanceCm();
     Serial.println(distance);
     delay(500);
+
+    
+ digitalWrite(led, HIGH);
+  delay(100);
+    digitalWrite(led, LOW);// reading distance when led is dim
+  delay(100);
 }
 
 
