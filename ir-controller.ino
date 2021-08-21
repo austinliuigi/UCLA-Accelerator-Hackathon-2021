@@ -51,22 +51,26 @@ void loop() {
     /* Serial.println(); */
 
     // Don't allow diagonal positions
-    if (!(left_joystick_x_pos == left_joystick_y_pos))
+    if (!(abs(left_joystick_x_pos) == abs(left_joystick_y_pos)))
     {
-        if ((left_joystick_x_pos < left_joystick_y_pos) && (left_joystick_y_pos > 50))
+        if ((abs(left_joystick_x_pos) < abs(left_joystick_y_pos)) && (left_joystick_y_pos > 50))
         {
+            Serial.println("Sending Up Signal");
             IrSender.sendNEC(up_address, command, num_of_repeats);
         }
-        if ((left_joystick_x_pos > left_joystick_y_pos) && (left_joystick_x_pos > 50))
+        else if ((abs(left_joystick_x_pos) > abs(left_joystick_y_pos)) && (left_joystick_x_pos > 50))
         {
+            Serial.println("Sending Right Signal");
             IrSender.sendNEC(right_address, command, num_of_repeats);
         }
-        if ((left_joystick_x_pos > left_joystick_y_pos) && (left_joystick_y_pos < -50))
+        else if ((abs(left_joystick_x_pos) < abs(left_joystick_y_pos)) && (left_joystick_y_pos < -50))
         {
+            Serial.println("Sending Down Signal");
             IrSender.sendNEC(down_address, command, num_of_repeats);
         }
-        if ((left_joystick_x_pos < left_joystick_y_pos) && (left_joystick_x_pos < -50))
+        else if ((abs(left_joystick_x_pos) > abs(left_joystick_y_pos)) && (left_joystick_x_pos < -50))
         {
+            Serial.println("Sending Left Signal");
             IrSender.sendNEC(left_address, command, num_of_repeats);
         }
     }
