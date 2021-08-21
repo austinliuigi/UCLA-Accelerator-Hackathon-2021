@@ -53,19 +53,19 @@ void loop() {
     // Don't allow diagonal positions
     if (!(left_joystick_x_pos == left_joystick_y_pos))
     {
-        if ((left_joystick_x_pos < left_joystick_y_pos) && (left_joystick_y_pos > 15))
+        if ((left_joystick_x_pos < left_joystick_y_pos) && (left_joystick_y_pos > 50))
         {
             IrSender.sendNEC(up_address, command, num_of_repeats);
         }
-        if ((left_joystick_x_pos > left_joystick_y_pos) && (left_joystick_x_pos > 15))
+        if ((left_joystick_x_pos > left_joystick_y_pos) && (left_joystick_x_pos > 50))
         {
             IrSender.sendNEC(right_address, command, num_of_repeats);
         }
-        if ((left_joystick_x_pos > left_joystick_y_pos) && (left_joystick_y_pos < -15))
+        if ((left_joystick_x_pos > left_joystick_y_pos) && (left_joystick_y_pos < -50))
         {
             IrSender.sendNEC(down_address, command, num_of_repeats);
         }
-        if ((left_joystick_x_pos < left_joystick_y_pos) && (left_joystick_x_pos < -15))
+        if ((left_joystick_x_pos < left_joystick_y_pos) && (left_joystick_x_pos < -50))
         {
             IrSender.sendNEC(left_address, command, num_of_repeats);
         }

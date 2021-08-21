@@ -9,7 +9,10 @@
 #define right_motor_in2_pin 9
 #define right_motor_en_pin 10
 #define servo_pin 3
-#define ir_receiver_pin 4
+#define ir_receiver_1_pin 3
+#define ir_receiver_2_pin 4
+
+IRrecv IrReceiver2;
 
 L298NX2 motors(left_motor_en_pin, left_motor_in1_pin, left_motor_in2_pin, right_motor_en_pin, right_motor_in1_pin, right_motor_in2_pin);
 
@@ -20,10 +23,11 @@ void setup() {
     motors.setSpeedA(150);  // Left Motor
     motors.setSpeedB(130);  // Right Motor
 
-    // Initiate pin of IrReceiver object
+    // Initiate pin of IrReceiver and IrReceiver2 objects
     /* IrReceiver.setReceivePin(ir_receiver_pin); */
     /* IrReceiver.enableIRIn(); */
-    IrReceiver.begin(ir_receiver_pin);
+    IrReceiver.begin(ir_receiver_1_pin);
+    IrReceiver2.begin(ir_receiver_2_pin);
 
     // Declare pin of myservo object
     /* myservo.attach(servo_pin); */
@@ -45,7 +49,7 @@ String mode;
 
 void loop() {
     /*** Infrared Signal Handling ***/
-    // If data is available
+    // If data is available on first receiver
     if (IrReceiver.decode())
     {
         if (IrReceiver.decodedIRData.protocol != 0)
@@ -96,6 +100,58 @@ void loop() {
         }
         // Reset and prepare to receive more data
         IrReceiver.resume();
+    }
+    // If data is available on second receiver
+    else if (IrReceiver2.decode())
+    {
+        if (IrReceiver2.decodedIRData.protocol != 0)
+        {
+            // Set mode
+            mode = "ir";
+
+            // Reset timer
+            time_since_last_signal = 0;
+            
+            // Print out protocol number
+            Serial.print("Protocol: ");
+            Serial.println(IrReceiver.decodedIRData.protocol);
+          
+            // Print out data in hexadecimal
+            Serial.print("0x");
+            Serial.println(IrReceiver.decodedIRData.address, HEX);
+            
+            // Handle up signal
+            if (IrReceiver2.decodedIRData.address == 0x1111)
+            {
+                Serial.println("-> Up Signal Received");
+                motors.forward();
+            }
+            // Handle right signal
+            else if (IrReceiver2.decodedIRData.address == 0x2222)
+            {
+                Serial.println("-> Right Signal Received");
+                motors.forwardA();
+                motors.backwardB();
+            }
+            // Handle down signal
+            else if (IrReceiver2.decodedIRData.address == 0x3333)
+            {
+                Serial.println("-> Down Signal Received");
+                motors.backward();
+            }
+            // Handle left signal
+            else if (IrReceiver2.decodedIRData.address == 0x4444)
+            {
+                Serial.println("-> Left Signal Received");
+                motors.backwardA();
+                motors.forwardB();
+            }
+
+            // Serial monitor data separator
+            Serial.println();
+        }
+        // Reset and prepare to receive more data
+        IrReceiver2.resume();
     }
     // If {continued_signal_wait_time}ms passes without a signal
     else if ((time_since_last_signal > continued_signal_wait_time) && (mode == "ir"))
