@@ -2,15 +2,18 @@
 #include <IRremote.h>
 #include <Servo.h>
 
+#define us_echo A0
+#define motion_led_pin 2
+#define ir_receiver_1_pin 3
+#define ir_receiver_2_pin 4
 #define left_motor_en_pin 5
 #define left_motor_in1_pin 6
 #define left_motor_in2_pin 7
 #define right_motor_in1_pin 8
 #define right_motor_in2_pin 9
 #define right_motor_en_pin 10
-#define servo_pin 3
-#define ir_receiver_1_pin 3
-#define ir_receiver_2_pin 4
+#define release_led_pin 11
+#define us_trig 13
 
 IRrecv IrReceiver2;
 
@@ -18,11 +21,10 @@ L298NX2 motors(left_motor_en_pin, left_motor_in1_pin, left_motor_in2_pin, right_
 
 Servo myservo;
 
-void setup()
-{
+void setup() {
     // Set motor speeds
-    motors.setSpeedA(150); // Left Motor
-    motors.setSpeedB(130); // Right Motor
+    motors.setSpeedA(150);  // Left Motor
+    motors.setSpeedB(130);  // Right Motor
 
     // Initiate pin of IrReceiver and IrReceiver2 objects
     /* IrReceiver.setReceivePin(ir_receiver_pin); */
@@ -33,14 +35,20 @@ void setup()
     // Declare pin of myservo object
     /* myservo.attach(servo_pin); */
 
+    // Set pins
+    pinMode(us_echo, INPUT);
+    pinMode(us_trig, OUTPUT);
+    pinMode(motion_led_pin, OUTPUT);
+    pinMode(release_led_pin, OUTPUT);
+
     // Start serial communication
     Serial.begin(9600);
 }
 
 // IR Specific Variables
-long time_since_last_signal = 0; // Tracks the time between *received* signals
+long time_since_last_signal = 0;        // Tracks the time between *received* signals
 unsigned long last_millis = 0;
-int continued_signal_wait_time = 150; // Number of milliseconds to wait for a repeated signal (ideally would be controller emitting delay)
+int continued_signal_wait_time = 150;    // Number of milliseconds to wait for a repeated signal (ideally would be controller emitting delay)
 
 // BT Specific Variables
 String bt_input = "";
@@ -48,8 +56,7 @@ String bt_input = "";
 // Other Variables
 String mode;
 
-void loop()
-{
+void loop() {
     /*** Infrared Signal Handling ***/
     // If data is available on first receiver
     if (IrReceiver.decode())
@@ -61,15 +68,15 @@ void loop()
 
             // Reset timer
             time_since_last_signal = 0;
-
+            
             // Print out protocol number
             Serial.print("Protocol: ");
             Serial.println(IrReceiver.decodedIRData.protocol);
-
+          
             // Print out data in hexadecimal
             Serial.print("0x");
             Serial.println(IrReceiver.decodedIRData.address, HEX);
-
+            
             // Handle up signal
             if (IrReceiver.decodedIRData.address == 0x1111)
             {
@@ -96,6 +103,11 @@ void loop()
                 motors.backwardA();
                 motors.forwardB();
             }
+            /* else if (IrReceiver.decodedIRData.address == 0x5555) */
+            /* { */
+            /*     Serial.println("-> Open Servo Signal Received"); */
+            /*     myservo.write(180); */
+            /* } */
 
             // Serial monitor data separator
             Serial.println();
@@ -113,15 +125,15 @@ void loop()
 
             // Reset timer
             time_since_last_signal = 0;
-
+            
             // Print out protocol number
             Serial.print("Protocol: ");
             Serial.println(IrReceiver.decodedIRData.protocol);
-
+          
             // Print out data in hexadecimal
             Serial.print("0x");
             Serial.println(IrReceiver.decodedIRData.address, HEX);
-
+            
             // Handle up signal
             if (IrReceiver2.decodedIRData.address == 0x1111)
             {
