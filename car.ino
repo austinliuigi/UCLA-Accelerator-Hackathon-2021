@@ -98,6 +98,11 @@ void loop() {
                 motors.backwardA();
                 motors.forwardB();
             }
+            /* else if (IrReceiver.decodedIRData.address == 0x5555) */
+            /* { */
+            /*     Serial.println("-> Open Servo Signal Received"); */
+            /*     myservo.write(180); */
+            /* } */
 
             // Serial monitor data separator
             Serial.println();
