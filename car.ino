@@ -36,6 +36,12 @@ void setup() {
     // Declare pin of myservo object
     /* myservo.attach(servo_pin); */
 
+    // Set pins
+    pinMode(us_echo, INPUT);
+    pinMode(us_trig, OUTPUT);
+    pinMode(motion_led_pin, OUTPUT);
+    pinMode(release_led_pin, OUTPUT);
+
     // Start serial communication
     Serial.begin(9600);
 }
