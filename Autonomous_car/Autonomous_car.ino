@@ -2,6 +2,8 @@
 // Ultrasonic on right side
 // Reflective IR on left side
 #include <HCSR04.h> //ultrasonic library
+#include <L298NX2.h>
+#include <Servo.h>
 
 // Initialize ultrasonic sensor 
 int triggerPin = 11;
@@ -17,25 +19,28 @@ int distIR;                     // value that the IRsensor is reading
 int IRWallDist = 200;           //NEED to test with maze
 
 //Initialize motors
-#define left_motor_enable_pin 5
-#define left_motor_input1_pin 6
-#define left_motor_input2_pin 7
-#define right_motor_input1_pin 8
-#define right_motor_input2_pin 9
-#define right_motor_enable_pin 10
+#define left_motor_en_pin 5
+#define left_motor_in1_pin 6
+#define left_motor_in2_pin 7
+#define right_motor_in1_pin 8
+#define right_motor_in2_pin 9
+#define right_motor_en_pin 10
+
+L298NX2 motors(left_motor_en_pin, left_motor_in1_pin, left_motor_in2_pin, right_motor_en_pin, right_motor_in1_pin, right_motor_in2_pin);
+
+//Initialize servo
+Servo myservo;
 
 void setup() {
    Serial.begin(9600); // initialize serial connection for printing values from sensor.
    pinMode(led, OUTPUT); // for troubleshooting
    pinMode(IRsensor, INPUT); 
 
-    // Set motor pins
-    pinMode(left_motor_enable_pin, OUTPUT);
-    pinMode(right_motor_enable_pin, OUTPUT);
-    pinMode(left_motor_input1_pin, OUTPUT);
-    pinMode(left_motor_input2_pin, OUTPUT);
-    pinMode(right_motor_input1_pin, OUTPUT);
-    pinMode(right_motor_input2_pin, OUTPUT);
+    // Set motor speeds
+    motors.setSpeedA(150);  // Left Motor
+    motors.setSpeedB(130);  // Right Motor
+
+    //Add servo unloading stuff
 }
 
 void loop() {
@@ -52,27 +57,40 @@ void loop() {
     //delay (500);
 
   if(distIR < IRWallDist && distUltra < UltraWallDist){
-     moveForwards(); //move forward when no wall is detected
+     motors.forward(); //move forward when no wall is detected
   }
   if (distIR > IRWallDist && distUltra < UltraWallDist){
           // turn left + move forward a bit
-     Serial.println("Left path detected -> turning left");
+           Serial.println("Left path detected -> turning left");
+           motors.backwardA();
+           motors.forwardB();
+           //also need to experiment this to turn 90
+           delay(1000);
+   /*
      turnLeft();
           //also need to experiment this to turn 90
      delay(1000);
+     */
      distIR = analogRead(A0);
   }
   if (distIR < IRWallDist && distUltra > UltraWallDist){
              // turn right + move forward a bit
      Serial.println("Right path detected -> turning right");
+     motors.forwardA();
+     motors.backwardB();
+     //also need to experiment this to turn 90
+     delay(1000);
+     /*
      turnRight();
              //We need to experiment with this, so it can actually turn 90
      delay(1000);     
              //Measure dist again for the right wall
+     
+     */
      distUltra = distanceSensor.measureDistanceCm(); 
   }
   if(distIR > IRWallDist && distUltra > UltraWallDist){
-    //stop
+    motors.stop(); //stop
     //unload
   }
   
@@ -89,6 +107,8 @@ void troubleshoot()
   delay(100);
 }
 
+
+/*
 unsigned int max_speed = 150;
 
 void moveForwards()
@@ -140,3 +160,5 @@ void turnLeft()
 
     Serial.println("-> turnLeft Function Called");
 }
+
+*/
