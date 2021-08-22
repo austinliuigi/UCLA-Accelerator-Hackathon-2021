@@ -7,13 +7,14 @@
 int triggerPin = 11;
 int echoPin = 12;
 double distUltra;
+double UltraWallDist = 4.5;
 const int led = 7; // for troubleshooting
 UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
 
 //Initialize IR sensor 
 #define IRsensor A0
 int distIR;
-int WallDist = 200;  //NEED to test with maze
+int IRWallDist = 200;  //NEED to test with maze
 
 void setup() {
    Serial.begin(9600); // initialize serial connection for printing values from sensor.
@@ -36,23 +37,18 @@ void loop() {
     //delay (500);
 
    
-  if(distIR < WallDist && distUltra < 4.5){
+  if(distIR < IRWallDist && distUltra < UltraWallDist){
     //move forward 
   }
-  if (){
-    
-    //stop + unload function
+  if (distIR > IRWallDist && distUltra < UltraWallDist){
+    // turn left + move forward a bit
+  }
+  if (distIR < IRWallDist && distUltra > UltraWallDist){
+    // turn right + move forward a bit
+  }
+  if(distIR > IRWallDist && distUltra > UltraWallDist){
+    //stop
+    //unload
   }
 
-  /*
-  if(both side <4cm){
-  Move forward}
-  If (left>4){
-  Turn left +move forward a bit}
-  if(right >4){
-  Turn right +move forward a bit}
-  if(both > 4){
-  Stop + unload}
-
- */
 }
