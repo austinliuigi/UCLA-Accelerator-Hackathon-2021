@@ -1,16 +1,17 @@
 // Autonomous Car + reading maze + turning
 // Ultrasonic on right side
 // Reflective IR on left side
-#include <HCSR04.h> //ultrasonic library
-#include <L298NX2.h>
+
+#include <HCSR04.h>  //ultrasonic library
+#include <L298NX2.h> //motor library
 #include <Servo.h>
 
 // Initialize ultrasonic sensor 
 int triggerPin = 11;
 int echoPin = 12;
-double distUltra;               // value that the ultrasensor is reading
+double distUltra;               // value read from ultrasensor 
 double UltraWallDist = 4.5;     // distance of wall to sensor
-const int led = 7;              // for troubleshooting
+
 UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
 
 //Initialize IR sensor 
@@ -26,14 +27,14 @@ int IRWallDist = 200;           //NEED to test with maze
 #define right_motor_in2_pin 9
 #define right_motor_en_pin 10
 
-L298NX2 motors(left_motor_en_pin, left_motor_in1_pin, left_motor_in2_pin, right_motor_en_pin, right_motor_in1_pin, right_motor_in2_pin);
+L298NX2 motors(left_motor_en_pin, left_motor_in1_pin, left_motor_in2_pin, 
+right_motor_en_pin, right_motor_in1_pin, right_motor_in2_pin);
 
-//Initialize servo
+//Initialize servo for unloading code
 Servo myservo;
 
 void setup() {
-   Serial.begin(9600); // initialize serial connection for printing values from sensor.
-   pinMode(led, OUTPUT); // for troubleshooting
+   Serial.begin(9600); // initialize serial connection
    pinMode(IRsensor, INPUT); 
 
     // Set motor speeds
@@ -60,105 +61,27 @@ void loop() {
      motors.forward(); //move forward when no wall is detected
   }
   if (distIR > IRWallDist && distUltra < UltraWallDist){
-          // turn left + move forward a bit
-           Serial.println("Left path detected -> turning left");
-           motors.backwardA();
-           motors.forwardB();
-           //also need to experiment this to turn 90
-           delay(1000);
-   /*
-     turnLeft();
-          //also need to experiment this to turn 90
+      // turn left + move forward a bit
+     Serial.println("Left path detected -> turning left");
+     motors.backwardA();
+     motors.forwardB();
+       //also need to experiment this to turn 90
      delay(1000);
-     */
      distIR = analogRead(A0);
   }
   if (distIR < IRWallDist && distUltra > UltraWallDist){
-             // turn right + move forward a bit
+      // turn right + move forward a bit
      Serial.println("Right path detected -> turning right");
      motors.forwardA();
      motors.backwardB();
-     //also need to experiment this to turn 90
+      //also need to experiment this to turn 90
      delay(1000);
-     /*
-     turnRight();
-             //We need to experiment with this, so it can actually turn 90
-     delay(1000);     
-             //Measure dist again for the right wall
-     
-     */
      distUltra = distanceSensor.measureDistanceCm(); 
   }
   if(distIR > IRWallDist && distUltra > UltraWallDist){
     motors.stop(); //stop
     //unload
+   delay(5000); 
   }
   
 }
-
-
-
-//lights an led to troubleshoot
-void troubleshoot()
-{
-  digitalWrite(led, HIGH);
-  delay(100);
-  digitalWrite(led, LOW);
-  delay(100);
-}
-
-
-/*
-unsigned int max_speed = 150;
-
-void moveForwards()
-{
-    // Set both motors to go forwards
-    digitalWrite(left_motor_input1_pin, HIGH);
-    digitalWrite(left_motor_input2_pin, LOW);
-    digitalWrite(right_motor_input1_pin, HIGH);
-    digitalWrite(right_motor_input2_pin, LOW);
-
-    // Enable motors at specific speed
-    analogWrite(left_motor_enable_pin, max_speed);
-    analogWrite(right_motor_enable_pin, max_speed);
-
-    Serial.println("-> moveForwards Function Called");
-}
-
-void turnRight()
-{
-    // Set left motor to go forwards
-    digitalWrite(left_motor_input1_pin, HIGH);
-    digitalWrite(left_motor_input2_pin, LOW);
-
-    // Set right motor to go backwards
-    digitalWrite(right_motor_input1_pin, LOW);
-    digitalWrite(right_motor_input2_pin, HIGH);
-
-    // Enable motors at specific speed
-    analogWrite(left_motor_enable_pin, max_speed);
-    analogWrite(right_motor_enable_pin, max_speed);
-
-    Serial.println("-> turnRight Function Called");
-}
-
-
-void turnLeft()
-{
-    // Set left motor to go backwards
-    digitalWrite(left_motor_input1_pin, LOW);
-    digitalWrite(left_motor_input2_pin, HIGH);
-
-    // Set right motor to go forwards
-    digitalWrite(right_motor_input1_pin, HIGH);
-    digitalWrite(right_motor_input2_pin, LOW);
-
-    // Enable motors at specific speed
-    analogWrite(left_motor_enable_pin, max_speed);
-    analogWrite(right_motor_enable_pin, max_speed);
-
-    Serial.println("-> turnLeft Function Called");
-}
-
-*/
