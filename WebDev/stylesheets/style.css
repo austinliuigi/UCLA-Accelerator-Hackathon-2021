@@ -71,9 +71,27 @@ pre code {
   margin-right: 30px;
 }
 
+button {
+  padding: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  font-family: "Poppins", sans-serif;
+  font-size: 2em;
+  color: #f1e6c1;
+  text-align: center;
+  background: none;
+}
+
 .container {
   display: flex;
   justify-content: space-between;
+  margin-top: 80px;
+}
+
+.container2 {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   margin-top: 80px;
 }
 
@@ -101,4 +119,64 @@ pre code {
 
 .images {
   width: 40vh;
+}
+
+button.button1 {
+  font-family: "Poppins", sans-serif;
+  font-size: 2em;
+  color: #f1e6c1;
+  display: inline-block;
+  padding: 0.35em 1.2em;
+  border: 0.1em solid #ffffff;
+  border-radius: 0.12em;
+  margin: 0 0.3em 0.3em 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+button.button1:hover {
+  color: white;
+  background-color: #4d5e72;
+  cursor: pointer;
+}
+@media all and (max-width: 30em) {
+   button.button1 {
+    display: block;
+    margin: 0.4em auto;
+  }
+}
+
+a.button2 {
+  font-family: "Poppins", sans-serif;
+  font-size: 2em;
+  display: inline-block;
+  padding: 0.5em 3em;
+  border: 0.16em solid #ffffff;
+  margin: 0 0.3em 0.3em 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-align: center;
+  transition: all 0.15s;
+}
+a.button2:hover {
+  color: #dddddd;
+  border-color: #dddddd;
+}
+a.button2:active {
+  color: #bbbbbb;
+  border-color: #bbbbbb;
+}
+@media all and (max-width: 30em) {
+   a.button2 {
+    display: block;
+    margin: 0.4em auto;
+  }
+}
+
+.buttonDiv {
+  display: block;
 }
