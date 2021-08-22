@@ -50,6 +50,16 @@ h2 {
   font-size: 2em;
 }
 
+h3 {
+  text-align: left;
+}
+
+figcaption {
+  color: #f1e6c1;
+  font-family: "Space Mono", monospace;
+  padding-top: 20px;
+}
+
 pre code {
   color: #f1e6c1;
   font-size: 150%;
@@ -87,4 +97,8 @@ pre code {
   padding: 40px;
   border: 2px solid #ccc;
   margin-top: 60px;
+}
+
+.images {
+  width: 40vh;
 }
