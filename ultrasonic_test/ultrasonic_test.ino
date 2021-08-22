@@ -62,6 +62,7 @@ void loop () {
   //  troubleshoot();
 }
 
+//lights an led to troubleshoot
 void troubleshoot()
 {
   digitalWrite(led, HIGH);
