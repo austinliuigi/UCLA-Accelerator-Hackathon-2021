@@ -16,6 +16,7 @@
 #define ir_receiver_2_pin 4
 
 //Object Declarations
+IRrecv IrReceiver1;
 IRrecv IrReceiver2;
 
 L298NX2 motors(left_motor_en_pin, left_motor_in1_pin, left_motor_in2_pin, right_motor_en_pin, right_motor_in1_pin, right_motor_in2_pin);
@@ -35,7 +36,7 @@ void setup()
     // Initiate pin of IrReceiver and IrReceiver2 objects
     /* IrReceiver.setReceivePin(ir_receiver_pin); */
     /* IrReceiver.enableIRIn(); */
-    IrReceiver.begin(ir_receiver_1_pin);
+    IrReceiver1.begin(ir_receiver_1_pin);
     IrReceiver2.begin(ir_receiver_2_pin);
 
     // Declare pin of myservo object
@@ -79,21 +80,21 @@ void resetMotors()
 
 //Help function that runs whenever an IR
 //Signal is recieved
-void handleIRCode()
+void handleIRCode(IRrecv &IR_rec)
 {
     // Reset timer
     time_since_last_signal = 0;
 
     // Print out protocol number
     Serial.print("Protocol: ");
-    Serial.println(IrReceiver.decodedIRData.protocol);
+    Serial.println(IR_rec.decodedIRData.protocol);
 
     // Print out data in hexadecimal
     Serial.print("0x");
-    Serial.println(IrReceiver.decodedIRData.address, HEX);
+    Serial.println(IR_rec.decodedIRData.address, HEX);
 
     // Handle Different Direction Signals
-    switch (IrReceiver.decodedIRData.address)
+    switch (IR_rec.decodedIRData.address)
     {
     case 0x1111:
         Serial.println("-> Up Signal Received");
@@ -123,12 +124,12 @@ void handleIRCode()
 void IRMode()
 {
     // If data is available on first receiver
-    if (IrReceiver.decode())
+    if (IrReceiver1.decode())
     {
         if (IrReceiver.decodedIRData.protocol != 0)
-            handleIRCode();
+            handleIRCode(IrReceiver1);
         // Reset and prepare to receive more data
-        IrReceiver.resume();
+        IrReceiver1.resume();
     }
 
     // If data is available on second receiver
@@ -136,7 +137,7 @@ void IRMode()
     {
         if (IrReceiver2.decodedIRData.protocol != 0)
         {
-            handleIRCode();
+            handleIRCode(IrReceiver2);
         }
         // Reset and prepare to receive more data
         IrReceiver2.resume();
