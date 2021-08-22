@@ -2,15 +2,19 @@
 #include <IRremote.h>
 #include <Servo.h>
 
-#define left_motor_en_pin 5
-#define left_motor_in1_pin 6
-#define left_motor_in2_pin 7
-#define right_motor_in1_pin 8
-#define right_motor_in2_pin 9
-#define right_motor_en_pin 10
-#define servo_pin 3
+#define us_echo A0
+#define motion_led_pin 2
 #define ir_receiver_1_pin 3
 #define ir_receiver_2_pin 4
+#define servo_pin 5
+#define left_motor_en_pin 6
+#define left_motor_in1_pin 7
+#define left_motor_in2_pin 8
+#define right_motor_in1_pin 9
+#define right_motor_in2_pin 10
+#define right_motor_en_pin 11
+#define release_led_pin 12
+#define us_trig 13
 
 IRrecv IrReceiver2;
 
