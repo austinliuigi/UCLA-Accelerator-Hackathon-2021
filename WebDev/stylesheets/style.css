@@ -17,6 +17,7 @@ body {
   margin-top: 60px;
   padding-left: 20vw;
   padding-right: 20vw;
+  margin-bottom: 10vh;
 }
 
 h1,
@@ -49,9 +50,6 @@ h2 {
   font-size: 2em;
 }
 
-section {
-}
-
 .container {
   display: flex;
   justify-content: space-between;
@@ -72,4 +70,10 @@ section {
   margin-right: 10px;
   border: 2px solid #ccc;
   width: 50%;
+}
+
+.content {
+  padding: 40px;
+  border: 2px solid #ccc;
+  margin-top: 60px;
 }
