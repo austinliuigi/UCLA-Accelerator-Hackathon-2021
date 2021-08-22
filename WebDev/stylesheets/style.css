@@ -50,6 +50,17 @@ h2 {
   font-size: 2em;
 }
 
+pre code {
+  color: #f1e6c1;
+  font-size: 150%;
+  border: 1px solid #ccc;
+  display: block;
+  padding: 20px;
+  text-align: left;
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
 .container {
   display: flex;
   justify-content: space-between;
