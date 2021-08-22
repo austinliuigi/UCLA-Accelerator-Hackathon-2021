@@ -80,7 +80,7 @@ void loop() {
   }
   if(distIR > IRWallDist && distUltra > UltraWallDist){
     motors.stop(); //stop
-    //unload
+    //unload object code
    delay(5000); 
   }
   
